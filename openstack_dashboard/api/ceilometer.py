@@ -604,6 +604,7 @@ class CeilometerUsage(object):
           - `with_users_and_tenants`: If true a user and a tenant object will
                                       be added to each resource object.
         """
+
         if with_users_and_tenants:
             ceilometer_usage_object = self
         else:
@@ -743,12 +744,13 @@ class Meters(object):
         self._cinder_meters_info = self._get_cinder_meters_info()
         self._swift_meters_info = self._get_swift_meters_info()
         self._kwapi_meters_info = self._get_kwapi_meters_info()
+        self._sdn_meters_info = self._get_sdn_meters_info()
 
         # Storing the meters info of all services together.
         all_services_meters = (self._nova_meters_info,
             self._neutron_meters_info, self._glance_meters_info,
             self._cinder_meters_info, self._swift_meters_info,
-            self._kwapi_meters_info)
+            self._kwapi_meters_info, self._sdn_meters_info)
         self._all_meters_info = {}
         for service_meters in all_services_meters:
             self._all_meters_info.update(dict([(meter_name, meter_info)
@@ -830,6 +832,16 @@ class Meters(object):
         return self._list(only_meters=self._kwapi_meters_info.keys(),
             except_meters=except_meters)
 
+    def list_sdn(self, except_meters=None):
+        """Returns a list of meters tied to SDN controller
+
+        :Parameters:
+          - `except_meters`: The list of meter names we don't want to show
+        """
+
+        return self._list(only_meters=self._sdn_meters_info.keys(),
+            except_meters=except_meters)
+
     def _list(self, only_meters=None, except_meters=None):
         """Returns a list of meters based on the meters names
 
@@ -857,7 +869,6 @@ class Meters(object):
         :Parameters:
           - `meter_names`: A list of meter names we want to fetch.
         """
-
         meters = []
         for meter_name in meter_names:
             meter = self._get_meter(meter_name)
@@ -1183,3 +1194,105 @@ class Meters(object):
                 'description': _("Power consumption"),
             }),
         ])
+
+    def _get_sdn_meters_info(self):
+        """Returns additional info for each meter
+
+        That will be used for augmenting the Ceilometer meter
+        """
+
+        return datastructures.SortedDict([
+            ('switch', {
+                'label': '',
+                'description': _("Existence of switch"),
+            }),
+            ('switch.port', {
+                'label': '',
+                'description': _("Existence of port"),
+            }),
+            ('switch.port.receive.packets', {
+                'label': '',
+                'description': _("Received Packets"),
+            }),
+            ('switch.port.transmit.packets', {
+                'label': '',
+                'description': _("Transmitted Packets"),
+            }),
+            ('switch.port.receive.bytes', {
+                'label': '',
+                'description': _("Received Bytes"),
+            }),
+            ('switch.port.transmit.bytes', {
+                'label': '',
+                'description': _("Transmitted Bytes"),
+            }),
+            ('switch.port.receive.drops', {
+                'label': '',
+                'description': _("Receive Drops"),
+            }),
+            ('switch.port.transmit.drops', {
+                'label': '',
+                'description': _("Transmit Drops"),
+            }),
+            ('switch.port.receive.errors', {
+                'label': '',
+                'description': _("Receive Errors"),
+            }),
+            ('switch.port.transmit.errors', {
+                'label': '',
+                'description': _("Transmit Errors"),
+            }),
+            ('switch.port.receive.frame_error', {
+                'label': '',
+                'description': _("Receive Frame Alignment Errors"),
+            }),
+            ('switch.port.receive.overrun_error', {
+                'label': '',
+                'description': _("Receive Overrun Errors"),
+            }),
+            ('switch.port.receive.crc_error', {
+                'label': '',
+                'description': _("Receive CRC Errors"),
+            }),
+            ('switch.port.collision.count', {
+                'label': '',
+                'description': _("Collisions"),
+            }),
+            ('switch.table', {
+                'label': '',
+                'description': _("Duration of Table"),
+            }),
+            ('switch.table.active.entries', {
+                'label': '',
+                'description': _("Active Entries"),
+            }),
+            ('switch.table.lookup.packets', {
+                'label': '',
+                'description': _("Packet Lookups"),
+            }),
+            ('switch.table.matched.packets', {
+                'label': '',
+                'description': _("Packet Matches"),
+            }),
+            ('switch.flow', {
+                'label': '',
+                'description': _("Duration of Flow"),
+            }),
+            ('switch.flow.duration.seconds', {
+                'label': '',
+                'description': _("Duration(seconds)"),
+            }),
+            ('switch.flow.duration.nanoseconds', {
+                'label': '',
+                'description': _("Duration(nanoseconds)"),
+            }),
+            ('switch.flow.packets', {
+                'label': '',
+                'description': _("Received Packets"),
+            }),
+            ('switch.flow.bytes', {
+                'label': '',
+                'description': _("Received Bytes"),
+            }),
+        ])
+
