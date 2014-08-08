@@ -14,13 +14,9 @@ from django.conf.urls import patterns  # noqa
 from django.conf.urls import url  # noqa
 
 from openstack_dashboard.dashboards.admin.metering import views
-from openstack_dashboard.dashboards.admin.metering import arista
 
 urlpatterns = patterns('openstack_dashboard.dashboards.admin.metering.views',
     url(r'^$', views.IndexView.as_view(), name='index'),
     url(r'^samples$', views.SamplesView.as_view(), name='samples'),
     url(r'^report$', views.ReportView.as_view(), name='report'),
-    url(r'^report/csv$', views.CsvReportView.as_view(), name='csvreport'),
-
-    # TODO: Move this to plugin system?
-    url(r'^report/arista$', arista.AristaReportView.as_view(), name='aristareport'))
+    url(r'^report/csv$', views.CsvReportView.as_view(), name='csvreport'))

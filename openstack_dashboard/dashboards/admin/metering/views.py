@@ -33,6 +33,7 @@ from openstack_dashboard.dashboards.admin.metering import tables as \
 from openstack_dashboard.dashboards.admin.metering import tabs as \
     metering_tabs
 
+
 class IndexView(tabs.TabbedTableView):
     tab_group_class = metering_tabs.CeilometerOverviewTabs
     template_name = 'admin/metering/index.html'
@@ -158,6 +159,7 @@ class ReportCsvRenderer(csvbase.BaseCsvResponse):
                        u["time"],
                        u["value"])
 
+
 def _calc_period(date_from, date_to):
     if date_from and date_to:
         if date_to < date_from:
@@ -261,10 +263,6 @@ def query_data(request,
             exceptions.handle(request,
                               _('Unable to retrieve tenant list.'))
         queries = {}
-
-        # Account for samples with no tenant
-        no_tenant_query = []
-
         for tenant in tenants:
             tenant_query = [{
                             "field": "project_id",
@@ -272,13 +270,6 @@ def query_data(request,
                             "value": tenant.id}]
 
             queries[tenant.name] = tenant_query
-
-            no_tenant_query.append({
-                                   "field": "project_id",
-                                   "op": "eq",
-                                   "value": tenant.id})
-
-        queries["No Tenant"] = no_tenant_query
 
         ceilometer_usage = ceilometer.CeilometerUsage(request)
         resources = ceilometer_usage.resource_aggregates_with_statistics(
@@ -322,7 +313,6 @@ def load_report_data(request):
         _('Cinder'): meters.list_cinder(),
         _('Swift_meters'): meters.list_swift(),
         _('Kwapi'): meters.list_kwapi(),
-        _('SDN'): meters.list_sdn(),
     }
     project_rows = {}
     date_options = request.GET.get('date_options', 7)
