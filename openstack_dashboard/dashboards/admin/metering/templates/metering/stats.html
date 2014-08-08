@@ -71,16 +71,6 @@
               {% endfor %}
             </optgroup>
           {% endif %}
-
-	  {% if sdn_meters %}
-            <optgroup label='{% trans "Network (From SDN Controller)" %}'>
-              {% for meter in sdn_meters %}
-                <option title="{{ meter.description }}"  value="{{ meter.name }}" data-unit="{{ meter.unit }}">
-                  {{ meter.label }}
-                </option>
-              {% endfor %}
-            </optgroup>
-	  {% endif %}
         </select>
       </div>
     </div>
