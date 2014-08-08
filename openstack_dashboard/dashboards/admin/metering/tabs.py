@@ -19,7 +19,6 @@ from horizon import tabs
 from openstack_dashboard import api
 from openstack_dashboard.api import ceilometer
 
-
 class GlobalStatsTab(tabs.Tab):
     name = _("Stats")
     slug = "stats"
@@ -48,10 +47,10 @@ class GlobalStatsTab(tabs.Tab):
             'cinder_meters': meters.list_cinder(),
             'swift_meters': meters.list_swift(),
             'kwapi_meters': meters.list_kwapi(),
+            'sdn_meters': meters.list_sdn(),
         }
 
         return context
-
 
 class DailyReportTab(tabs.Tab):
     name = _("Daily Report")
@@ -62,8 +61,17 @@ class DailyReportTab(tabs.Tab):
         context = template.RequestContext(request)
         return context
 
+# TODO: This should probably be moved to some sort of plugin system.
+class AristaReportTab(tabs.Tab):
+    name = _("Arista Report")
+    slug = "arista_report"
+    template_name = ("admin/metering/arista_tab.html")
+
+    def get_context_data(self, request):
+        context = template.RequestContext(request)
+        return context
 
 class CeilometerOverviewTabs(tabs.TabGroup):
     slug = "ceilometer_overview"
-    tabs = (DailyReportTab, GlobalStatsTab, )
+    tabs = (DailyReportTab, GlobalStatsTab, AristaReportTab, )
     sticky = True
